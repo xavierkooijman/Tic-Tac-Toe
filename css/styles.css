@@ -1,0 +1,86 @@
+@import url('https://fonts.googleapis.com/css2?family=Bungee+Shade&family=Caesar+Dressing&family=Julius+Sans+One&family=Libre+Baskerville&family=Mulish&family=Outfit&family=Pompiere&family=Work+Sans&display=swap');
+
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body{
+  font-family: "Outfit";
+  color: #ededed;
+  background-color: #1c1c1c;
+}
+
+header{
+  border-bottom: 1px solid #ededed;
+  text-align: center;
+  padding: 1.2em;
+  font-weight: bold;
+  height: 10%;
+}
+
+header span{
+  color: #ef4e7b;
+}
+
+button, input{
+  font: inherit;
+  color: #ededed;
+  background-color: #1c1c1c;
+  border: none;
+  border-radius: 5px;
+  padding: 1em;
+}
+
+button{
+  cursor: pointer;
+}
+
+#startPage{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.card{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  background-color: #ef4e7b;
+  width: 500px;
+  height: 400px;
+  
+}
+
+.signButtons button{
+  width: 100%;
+  font-size: 4rem;
+  font-weight: bold;
+  padding: 0;
+}
+
+.signButtons{
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  width: 80%;
+  background-color: #1c1c1c;
+  border-radius: 5px;
+}
+
+.nameInputs{
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  width: 80%;
+}
+
+.nameInputs input{
+  width: 100%;
+}
+
+#gamePage{
+  display: none;
+}
