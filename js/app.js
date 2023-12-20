@@ -54,6 +54,10 @@ const controlGame = (()=>{
     }
   }
 
+  const makeMove = () =>{
+    gameBoard.setField()
+  }
+
   const checkWin = () =>{
     let board = gameBoard.board
     console.log(board)
@@ -64,13 +68,24 @@ const controlGame = (()=>{
     }
   }
 
-  const makeMove = () =>{
-    gameBoard.setField()
-  }
-
-  return{checkWin}
+  return{getCurrentPlayer,makeMove,checkWin}
 })()
 
 const controlDOM = (()=>{
-  
+  const gamePage = document.getElementById('gamePage')
+  const startPage = document.getElementById('startPage')
+  const startButton = document.getElementById('startGameButton')
+  const buttonSignX = document.getElementById('buttonSignX')
+  const buttonSignO = document.getElementById('buttonSignO')
+  const nameInputsContainer = document.getElementsByClassName('nameInputs')
+  const turnText = document.getElementById('turnText')
+  const boardButtons = document.getElementsByClassName('gameBoardButtons')
+  const scoreBoardCards = document.getElementsByClassName('scoreBoardCards')
+  const restartButton = document.getElementById('restartButton')
+
+  startButton.addEventListener('click', () =>{
+    startPage.style.display = 'none'
+    gamePage.style.display = 'flex'
+  })
+
 })()
