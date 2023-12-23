@@ -19,28 +19,28 @@
           <button id="buttonSignO">O</button>
         </div>
         <div class="nameInputs">
-          <input type="text" placeholder="Player 1 Name">
-          <input type="text" placeholder="Player 2 Name">
+          <input type="text" placeholder="Player 1 Name" id="player1Name">
+          <input type="text" placeholder="Player 2 Name" id="player2Name">
         </div>
         <button id="startGameButton">START GAME</button>
       </div>
     </div>
     <div id="gamePage">
-      <p id="turnText">TURN <span>X</span></p>
+      <p id="turnText"></p>
       <div id="gameBoard">
-        <button class="gameBoardButtons"></button>
-        <button class="gameBoardButtons"></button>
-        <button class="gameBoardButtons"></button>
-        <button class="gameBoardButtons"></button>
-        <button class="gameBoardButtons"></button>
-        <button class="gameBoardButtons"></button>
-        <button class="gameBoardButtons"></button>
-        <button class="gameBoardButtons"></button>
-        <button class="gameBoardButtons"></button>
+        <button class="gameBoardButtons" data-id="0"></button>
+        <button class="gameBoardButtons" data-id="1"></button>
+        <button class="gameBoardButtons" data-id="2"></button>
+        <button class="gameBoardButtons" data-id="3"></button>
+        <button class="gameBoardButtons" data-id="4"></button>
+        <button class="gameBoardButtons" data-id="5"></button>
+        <button class="gameBoardButtons" data-id="6"></button>
+        <button class="gameBoardButtons" data-id="7"></button>
+        <button class="gameBoardButtons" data-id="8"></button>
       </div>
       <div id="gameScoreBoard">
         <div class="scoreBoardCards">
-          <p>PLAYER 1</p>
+          <p></p>
           <p>0</p>
         </div>
         <div class="scoreBoardCards">
@@ -48,7 +48,7 @@
           <p>0</p>
         </div>
         <div class="scoreBoardCards">
-          <p>PLAYER 2</p>
+          <p></p>
           <p>0</p>
         </div>
       </div>

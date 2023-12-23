@@ -1,9 +1,9 @@
 const gameBoard = (()=>{
 
-  let board = [,,,,,,'X','X','X']
+  let board = [,,,,,,,,]
 
   const setField = (index,sign) =>{
-    gameBoard[index] = sign
+    board[index] = sign
   }
 
   const getField = (index) =>{
@@ -30,8 +30,6 @@ const player = (sign,name)=>{
 
 const controlGame = (()=>{
 
-  const playerX = player('X')
-  const playerO = player('O')
   let round = 1
 
   const pattern = [
@@ -45,6 +43,15 @@ const controlGame = (()=>{
     [2,4,6]
   ]
 
+  const createPlayers = (name1,name2) =>{
+    const playerX = player('X',name1)
+    const playerO = player('O',name2)
+  }
+
+  const nextRound = () =>{
+    round++
+  }
+
   const getCurrentPlayer = () =>{
     if(round % 2 == 0){
       return playerO
@@ -54,8 +61,8 @@ const controlGame = (()=>{
     }
   }
 
-  const makeMove = () =>{
-    gameBoard.setField()
+  const makeMove = (index,sign) =>{
+    gameBoard.setField(index,sign)
   }
 
   const checkWin = () =>{
@@ -68,7 +75,7 @@ const controlGame = (()=>{
     }
   }
 
-  return{getCurrentPlayer,makeMove,checkWin}
+  return{createPlayers,nextRound,getCurrentPlayer,makeMove,checkWin}
 })()
 
 const controlDOM = (()=>{
@@ -77,15 +84,60 @@ const controlDOM = (()=>{
   const startButton = document.getElementById('startGameButton')
   const buttonSignX = document.getElementById('buttonSignX')
   const buttonSignO = document.getElementById('buttonSignO')
-  const nameInputsContainer = document.getElementsByClassName('nameInputs')
+  const player1Name = document.getElementById('player1Name')
+  const player2Name = document.getElementById('player2Name')
   const turnText = document.getElementById('turnText')
   const boardButtons = document.getElementsByClassName('gameBoardButtons')
   const scoreBoardCards = document.getElementsByClassName('scoreBoardCards')
   const restartButton = document.getElementById('restartButton')
 
+  const changeSignChoiceColor = (el,el2) =>{
+    el.style.backgroundColor = '#ef4e7b'
+    el2.style.backgroundColor = '#323f4e'
+  }
+
+  const changeTurn = () =>{
+    const currentPlayer = controlGame.getCurrentPlayer()
+    turnText.textContent = ` TURN - ${currentPlayer.getName()}`
+  }
+
+  const getNames = () =>{
+    const player1Name = player1Name.value
+    const player2Name = player2Name.value
+    return [player1Name,player2Name]
+  }
+
+  const setNames = (playerNames) =>{
+    scoreBoardCards[0].querySelector('p').textContent = playerNames[0]
+    scoreBoardCards[2].querySelector('p').textContent = playerNames[1]
+  }
+
   startButton.addEventListener('click', () =>{
     startPage.style.display = 'none'
     gamePage.style.display = 'flex'
+    const playerNames = getNames()
+    console.log(playerNames)
+    setNames(playerNames)
+    changeTurn()
   })
+
+  buttonSignX.addEventListener('click', () =>{
+    changeSignChoiceColor(buttonSignX,buttonSignO)
+  })
+
+  buttonSignO.addEventListener('click', () =>{
+    changeSignChoiceColor(buttonSignO,buttonSignX)
+  })
+
+  for(let i=0; i<boardButtons.length;i++){
+    boardButtons[i].addEventListener('click', () =>{
+      const curentSign = controlGame.getCurrentPlayer().getSign()
+      const index = boardButtons[i].getAttribute('data-id')
+      controlGame.makeMove(index,curentSign)
+      controlGame.checkWin()
+      controlGame.nextRound()
+      changeTurn()
+    })
+  }
 
 })()

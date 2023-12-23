@@ -87,10 +87,6 @@ button{
   padding: 0.7em;
 }
 
-.signButtonClicked{
-  background-color: #ef4e7b !important;
-}
-
 .nameInputs{
   display: flex;
   flex-direction: row;
