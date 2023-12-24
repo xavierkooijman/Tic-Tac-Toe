@@ -32,6 +32,9 @@ const controlGame = (()=>{
 
   let round = 1
 
+  let playerX
+  let playerO
+
   const pattern = [
     [0,1,2],
     [3,4,5],
@@ -44,8 +47,8 @@ const controlGame = (()=>{
   ]
 
   const createPlayers = (name1,name2) =>{
-    const playerX = player('X',name1)
-    const playerO = player('O',name2)
+    playerX = player('X',name1)
+    playerO = player('O',name2)
   }
 
   const nextRound = () =>{
@@ -67,15 +70,14 @@ const controlGame = (()=>{
 
   const checkWin = () =>{
     let board = gameBoard.board
-    console.log(board)
     for(let i=0; i < pattern.length; i++){
-      if(board[pattern[i][0]] == "X" && board[pattern[i][1]] == "X" && board[pattern[i][2]] == "X"){
-        console.log('win')
+      if(board[pattern[i][0]] == board[pattern[i][1]] && board[pattern[i][1]] == board[pattern[i][2]] && board[pattern[i][0]] != null){
+        return true
       }
     }
   }
 
-  return{createPlayers,nextRound,getCurrentPlayer,makeMove,checkWin}
+  return{createPlayers,nextRound,getCurrentPlayer,makeMove,checkWin,playerX,playerO}
 })()
 
 const controlDOM = (()=>{
@@ -84,8 +86,8 @@ const controlDOM = (()=>{
   const startButton = document.getElementById('startGameButton')
   const buttonSignX = document.getElementById('buttonSignX')
   const buttonSignO = document.getElementById('buttonSignO')
-  const player1Name = document.getElementById('player1Name')
-  const player2Name = document.getElementById('player2Name')
+  const player1NameInput = document.getElementById('player1Name')
+  const player2NameInput = document.getElementById('player2Name')
   const turnText = document.getElementById('turnText')
   const boardButtons = document.getElementsByClassName('gameBoardButtons')
   const scoreBoardCards = document.getElementsByClassName('scoreBoardCards')
@@ -102,22 +104,38 @@ const controlDOM = (()=>{
   }
 
   const getNames = () =>{
-    const player1Name = player1Name.value
-    const player2Name = player2Name.value
+    const player1Name = player1NameInput.value
+    const player2Name = player2NameInput.value
+    controlGame.createPlayers(player1Name,player2Name)
     return [player1Name,player2Name]
   }
 
-  const setNames = (playerNames) =>{
+  const setScoreboardNames = (playerNames) =>{
     scoreBoardCards[0].querySelector('p').textContent = playerNames[0]
     scoreBoardCards[2].querySelector('p').textContent = playerNames[1]
+  }
+
+  const displaySign = (sign,boardButton) =>{
+    boardButton.textContent = sign
+    if(sign == 'O'){
+      boardButton.style.color = '#ef4e7b'
+    }
+  }
+
+  const displayWinner = () =>{
+    const currentPlayer = controlGame.getCurrentPlayer()
+    turnText.textContent = `${currentPlayer.getName()} WINS!!!`
+  }
+
+  const clearDisplay = () =>{
+    
   }
 
   startButton.addEventListener('click', () =>{
     startPage.style.display = 'none'
     gamePage.style.display = 'flex'
     const playerNames = getNames()
-    console.log(playerNames)
-    setNames(playerNames)
+    setScoreboardNames(playerNames)
     changeTurn()
   })
 
@@ -134,10 +152,19 @@ const controlDOM = (()=>{
       const curentSign = controlGame.getCurrentPlayer().getSign()
       const index = boardButtons[i].getAttribute('data-id')
       controlGame.makeMove(index,curentSign)
-      controlGame.checkWin()
-      controlGame.nextRound()
-      changeTurn()
+      displaySign(curentSign,boardButtons[i])
+      if(controlGame.checkWin() === true){
+        displayWinner()
+      }
+      else{
+        controlGame.nextRound()
+        changeTurn()
+      }
     })
   }
+
+  restartButton.addEventListener('click', () =>{
+    clearDisplay()
+  })
 
 })()
