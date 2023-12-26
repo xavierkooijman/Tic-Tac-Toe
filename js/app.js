@@ -126,6 +126,10 @@ const controlDOM = (()=>{
   const boardButtons = document.getElementsByClassName('gameBoardButtons')
   const scoreBoardCards = document.getElementsByClassName('scoreBoardCards')
   const restartButton = document.getElementById('restartButton')
+  const modal = document.getElementById('modalBackground')
+  const modalWinnerText = modal.querySelector('p')
+  const modalNextRound = modal.querySelector('button')
+  const modalQuitButton = modal.querySelector('button:nth-child(3)') 
 
   let player1Sign = 'X'
 
@@ -169,21 +173,38 @@ const controlDOM = (()=>{
 
   const displaySign = (sign,boardButton) =>{
     boardButton.textContent = sign
-    if(sign == 'O'){
+    console.log(sign)
+    if(sign === 'O'){
       boardButton.style.color = '#ef4e7b'
+    }
+    else{
+      boardButton.style.color = '#ededed'
     }
   }
 
   const displayWinner = () =>{
     const currentPlayer = controlGame.getCurrentPlayer()
     turnText.textContent = `${currentPlayer.getName()} WINS!!!`
+    modalWinnerText.textContent = `${currentPlayer.getName()} WINS!!!`
   }
 
   const clearDisplay = () =>{
     for(let i=0;i<boardButtons.length;i++){
       boardButtons[i].textContent = ''
+      boardButtons[i].disabled = false
     }
   }
+
+  modalNextRound.addEventListener('click', () =>{
+    controlGame.restartGame()
+    clearDisplay()
+    changeTurn()
+    modal.style.display = "none"
+  })
+
+  modalQuitButton.addEventListener('click', () =>{
+    location.reload()
+  })
 
   startButton.addEventListener('click', () =>{
     startPage.style.display = 'none'
@@ -209,10 +230,12 @@ const controlDOM = (()=>{
       const curentSign = controlGame.getCurrentPlayer().getSign()
       const index = boardButtons[i].getAttribute('data-id')
       controlGame.makeMove(index,curentSign)
+      boardButtons[i].disabled = true
       displaySign(curentSign,boardButtons[i])
       if(controlGame.checkWin() === true){
         displayNumberOfWins()
         displayWinner()
+        modal.style.display = "flex"
       }
       else{
         controlGame.nextRound()
