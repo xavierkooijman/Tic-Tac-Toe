@@ -4,18 +4,24 @@ const gameBoard = (()=>{
 
   const setField = (index,sign) =>{
     board[index] = sign
+    console.log(board)
   }
 
-  const getField = (index) =>{
-    return board[index]
+  const getBoard = () =>{
+    return board
   }
 
-  return{setField,getField,board}
+  const clearBoard = () =>{
+    board = [,,,,,,,,]
+  }
+
+  return{setField,getBoard,clearBoard,board}
 })()
 
-const player = (sign,name)=>{
+const player = (sign,name,wins)=>{
   this.sign = sign
   this.name = name
+  this.wins = wins
 
   const getSign = () =>{
     return sign
@@ -25,7 +31,15 @@ const player = (sign,name)=>{
     return name
   }
 
-  return {getSign, getName}
+  const getWins = () =>{
+    return wins
+  }
+
+  const addWin = () =>{
+    wins++
+  }
+
+  return {getSign, getName, getWins, addWin}
 }
 
 const controlGame = (()=>{
@@ -46,13 +60,21 @@ const controlGame = (()=>{
     [2,4,6]
   ]
 
-  const createPlayers = (name1,name2) =>{
-    playerX = player('X',name1)
-    playerO = player('O',name2)
+  const createPlayers = (name1,name2,player1Sign) =>{
+    if(player1Sign == 'X'){
+      playerX = player('X',name1,0)
+      playerO = player('O',name2,0)
+    }
+    else{
+      playerX = player('X',name2,0)
+      playerO = player('O',name1,0)
+    }
+    console.log(playerX.getName(),playerO.getName())
   }
 
   const nextRound = () =>{
     round++
+    console.log(round)
   }
 
   const getCurrentPlayer = () =>{
@@ -64,20 +86,32 @@ const controlGame = (()=>{
     }
   }
 
+  const getBothPlayers = () =>{
+    return[playerX,playerO]
+  }
+
   const makeMove = (index,sign) =>{
     gameBoard.setField(index,sign)
   }
 
   const checkWin = () =>{
-    let board = gameBoard.board
+    const board = gameBoard.getBoard()
+    console.log(board)
     for(let i=0; i < pattern.length; i++){
       if(board[pattern[i][0]] == board[pattern[i][1]] && board[pattern[i][1]] == board[pattern[i][2]] && board[pattern[i][0]] != null){
+        const currentPlayer = getCurrentPlayer()
+        currentPlayer.addWin()
         return true
       }
     }
   }
 
-  return{createPlayers,nextRound,getCurrentPlayer,makeMove,checkWin,playerX,playerO}
+  const restartGame = () =>{
+    round = 1
+    gameBoard.clearBoard()
+  }
+
+  return{createPlayers,nextRound,getCurrentPlayer,makeMove,getBothPlayers,checkWin,restartGame,playerX,playerO}
 })()
 
 const controlDOM = (()=>{
@@ -93,9 +127,15 @@ const controlDOM = (()=>{
   const scoreBoardCards = document.getElementsByClassName('scoreBoardCards')
   const restartButton = document.getElementById('restartButton')
 
+  let player1Sign = 'X'
+
   const changeSignChoiceColor = (el,el2) =>{
     el.style.backgroundColor = '#ef4e7b'
     el2.style.backgroundColor = '#323f4e'
+  }
+
+  const setPlayer1Sign = (sign) =>{
+    player1Sign = sign
   }
 
   const changeTurn = () =>{
@@ -106,13 +146,25 @@ const controlDOM = (()=>{
   const getNames = () =>{
     const player1Name = player1NameInput.value
     const player2Name = player2NameInput.value
-    controlGame.createPlayers(player1Name,player2Name)
+    controlGame.createPlayers(player1Name,player2Name,player1Sign)
     return [player1Name,player2Name]
   }
 
   const setScoreboardNames = (playerNames) =>{
     scoreBoardCards[0].querySelector('p').textContent = playerNames[0]
     scoreBoardCards[2].querySelector('p').textContent = playerNames[1]
+  }
+
+  const displayNumberOfWins = () =>{
+    const players = controlGame.getBothPlayers()
+    if(player1Sign == 'X'){
+      scoreBoardCards[0].querySelector('p:nth-child(2)').textContent = players[0].getWins()
+      scoreBoardCards[2].querySelector('p:nth-child(2)').textContent = players[1].getWins()
+    }
+    else{
+      scoreBoardCards[0].querySelector('p:nth-child(2)').textContent = players[1].getWins()
+      scoreBoardCards[2].querySelector('p:nth-child(2)').textContent = players[0].getWins()
+    }
   }
 
   const displaySign = (sign,boardButton) =>{
@@ -128,7 +180,9 @@ const controlDOM = (()=>{
   }
 
   const clearDisplay = () =>{
-    
+    for(let i=0;i<boardButtons.length;i++){
+      boardButtons[i].textContent = ''
+    }
   }
 
   startButton.addEventListener('click', () =>{
@@ -136,15 +190,18 @@ const controlDOM = (()=>{
     gamePage.style.display = 'flex'
     const playerNames = getNames()
     setScoreboardNames(playerNames)
+    displayNumberOfWins()
     changeTurn()
   })
 
   buttonSignX.addEventListener('click', () =>{
     changeSignChoiceColor(buttonSignX,buttonSignO)
+    setPlayer1Sign('X')
   })
 
   buttonSignO.addEventListener('click', () =>{
     changeSignChoiceColor(buttonSignO,buttonSignX)
+    setPlayer1Sign('O')
   })
 
   for(let i=0; i<boardButtons.length;i++){
@@ -154,6 +211,7 @@ const controlDOM = (()=>{
       controlGame.makeMove(index,curentSign)
       displaySign(curentSign,boardButtons[i])
       if(controlGame.checkWin() === true){
+        displayNumberOfWins()
         displayWinner()
       }
       else{
@@ -164,7 +222,9 @@ const controlDOM = (()=>{
   }
 
   restartButton.addEventListener('click', () =>{
+    controlGame.restartGame()
     clearDisplay()
+    changeTurn()
   })
 
 })()
