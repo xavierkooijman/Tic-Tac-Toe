@@ -1,6 +1,6 @@
 const gameBoard = (()=>{
 
-  let board = [,,,,,,,,]
+  let board = []
 
   const setField = (index,sign) =>{
     board[index] = sign
@@ -12,7 +12,7 @@ const gameBoard = (()=>{
   }
 
   const clearBoard = () =>{
-    board = [,,,,,,,,]
+    board = []
   }
 
   return{setField,getBoard,clearBoard,board}
@@ -45,6 +45,7 @@ const player = (sign,name,wins)=>{
 const controlGame = (()=>{
 
   let round = 1
+  let ties = 0
 
   let playerX
   let playerO
@@ -106,12 +107,24 @@ const controlGame = (()=>{
     }
   }
 
+  const checkTie = () =>{
+    const board = gameBoard.getBoard()
+    if(board.includes(undefined) != true && board.length == 9 && checkWin() != true){
+      ties++
+      return true
+    }
+  }
+
+  const getTies = () =>{
+    return ties
+  }
+
   const restartGame = () =>{
     round = 1
     gameBoard.clearBoard()
   }
 
-  return{createPlayers,nextRound,getCurrentPlayer,makeMove,getBothPlayers,checkWin,restartGame,playerX,playerO}
+  return{createPlayers,nextRound,getCurrentPlayer,makeMove,getBothPlayers,checkWin,checkTie,getTies,restartGame,playerX,playerO}
 })()
 
 const controlDOM = (()=>{
@@ -171,6 +184,10 @@ const controlDOM = (()=>{
     }
   }
 
+  const displayNumberOfTies = () =>{
+    scoreBoardCards[1].querySelector('p:nth-child(2)').textContent = controlGame.getTies()
+  }
+
   const displaySign = (sign,boardButton) =>{
     boardButton.textContent = sign
     console.log(sign)
@@ -212,6 +229,7 @@ const controlDOM = (()=>{
     const playerNames = getNames()
     setScoreboardNames(playerNames)
     displayNumberOfWins()
+    displayNumberOfTies()
     changeTurn()
   })
 
@@ -235,6 +253,11 @@ const controlDOM = (()=>{
       if(controlGame.checkWin() === true){
         displayNumberOfWins()
         displayWinner()
+        modal.style.display = "flex"
+      }
+      else if(controlGame.checkTie() === true){
+        displayNumberOfTies()
+        modalWinnerText.textContent = `IT'S A TIE`
         modal.style.display = "flex"
       }
       else{
